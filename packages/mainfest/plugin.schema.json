@@ -1,0 +1,88 @@
+{
+    "$ref": "#/definitions/Manifest",
+    "definitions": {
+        "Manifest": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["manifest_version", "name", "author", "description", "version", "entries"],
+            "properties": {
+                "manifest_version": {
+                    "type": "integer",
+                    "maximum": 1,
+                    "minimum": 1
+                },
+                "name": {
+                    "type": "string"
+                },
+                "author": {
+                    "anyOf": [
+                        { "$ref": "#/definitions/Author" },
+                        {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Author"
+                            }
+                        }
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "homepage_url": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "experimental": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "default_locale": {
+                    "type": "string",
+                    "default": "en"
+                },
+                "entries": {
+                    "$ref": "#/definitions/Entries"
+                }
+            },
+            "title": "Manifest"
+        },
+        "Author": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": ["http"]
+                }
+            },
+            "required": ["name"],
+            "title": "Author"
+        },
+        "Entries": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+                "background": {
+                    "type": "string"
+                },
+                "popup": {
+                    "type": "string"
+                },
+                "dashboard": {
+                    "type": "string"
+                },
+                "content_script": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

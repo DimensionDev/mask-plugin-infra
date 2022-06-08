@@ -1,0 +1,23 @@
+{
+    "manifest_version": 1,
+    "name": "Example extension",
+    "author": [
+        {
+            "name": "Example",
+            "url": "http://example.com"
+        }
+    ],
+    "description": "A plain text description",
+    "version": "0.1.0",
+    "homepage_url": "https://example.com",
+    "experimental": false,
+
+    "default_locale": "en",
+
+    "entries": {
+        "background": "./dist/background.js",
+        "popup": "./dist/popup.js",
+        "dashboard": "./dist/dashboard.js",
+        "content_script": "./dist/content_script.js"
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@masknet/plugin-manifest",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Manifest for Mask plugin",
+  "files": [
+    "plugin.schema.json"
+  ]
+}

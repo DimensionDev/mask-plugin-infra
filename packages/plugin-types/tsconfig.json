@@ -3,7 +3,7 @@
     "compilerOptions": {
         "skipLibCheck": false,
         "noEmit": true,
-        "tsBuildInfoFile": "./dist/.tsbuildinfo",
+        "tsBuildInfoFile": "./dist/.tsbuildinfo"
     },
     "include": ["./types/**/*.d.ts"]
 }
