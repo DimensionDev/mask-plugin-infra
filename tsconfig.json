@@ -1,5 +1,5 @@
 {
-    "references": [],
+    "references": [{ "path": "./packages/plugin-types" }],
     "compilerOptions": {
         // Classification follows https://www.typescriptlang.org/tsconfig
 

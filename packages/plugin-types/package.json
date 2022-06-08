@@ -1,0 +1,8 @@
+{
+  "name": "@masknet/plugin-types",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Type definition for plugin developers",
+  "files": ["types"],
+  "types": "./types/index.d.ts"
+}
