@@ -1,0 +1,30 @@
+{
+  "name": "@masknet/plugin-cli",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "mask-plugin-build": "./dist/build.js"
+  },
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "swc-loader": "^0.2.3",
+    "resolve-typescript-plugin": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=18.3.0"
+  },
+  "devDependencies": {
+    "@types/gulp": "^4.0.9",
+    "@types/node": "^17.0.42",
+    "webpack": "^5.73.0",
+    "webpack-dev-server": "^4.9.2",
+    "@swc/core": "^1.2.203"
+  },
+  "peerDependencies": {
+    "typescript": "^4.7",
+    "webpack": "^5.73.0",
+    "webpack-dev-server": "^4.9.2",
+    "@swc/core": "^1.2.203"
+  }
+}

@@ -4,5 +4,16 @@
   "type": "module",
   "description": "Type definition for plugin developers",
   "files": ["types"],
-  "types": "./types/index.d.ts"
+  "types": "./types/index.d.ts",
+  "dependencies": {
+    "tss-react": "^3.6.2",
+    "async-call-rpc": "^6.1.0"
+  },
+  "devDependencies": {
+    "@mui/material": "^5",
+    "@types/web": "^0.0.68"
+  },
+  "peerDependencies": {
+    "@mui/material": "^5"
+  }
 }
