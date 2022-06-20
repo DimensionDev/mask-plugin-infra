@@ -9,7 +9,9 @@ declare module '@masknet/theme' {
         onBack?(): void
         onClose?(): void
     }
-    export interface MaskDialogProps extends React.PropsWithChildren<Omit<MaskDialogTitleProps, 'children'>>, Pick<DialogProps, 'fullWidth' | 'maxWidth'> {
+    export interface MaskDialogProps
+        extends React.PropsWithChildren<Omit<MaskDialogTitleProps, 'children'>>,
+            Pick<DialogProps, 'fullWidth' | 'maxWidth'> {
         title: string
         open: boolean
         DialogProps?: Omit<DialogProps, 'open'>

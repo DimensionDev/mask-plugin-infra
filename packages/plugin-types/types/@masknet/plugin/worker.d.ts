@@ -1,6 +1,6 @@
 declare module '@masknet/plugin/worker' {
     import type { DatabaseStorage } from 'mask://self'
-    import type { Option, Result } from "ts-results"
+    import type { Option, Result } from 'ts-results'
     //#region TaggedStorage
     /**
      * @typeParameter Data It should be a [tagged union](https://en.wikipedia.org/wiki/Tagged_union) with an extra `id` field

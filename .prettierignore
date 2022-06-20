@@ -1,3 +1,5 @@
 .github
 package.json
 pnpm-lock.yaml
+packages/plugin-types/types/web.d.ts
+dist/
