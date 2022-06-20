@@ -1,12 +1,12 @@
 import ts from 'typescript'
 import { writeFile, readFile } from 'node:fs/promises'
 
-const contains = ['atob', 'btoa', 'TextEncoder', 'TextDecoder', 'crypto', 'EventTarget', 'URL']
+const contains = ['atob', 'btoa', 'TextEncoder', 'TextDecoder', 'crypto', 'EventTarget', 'URL', 'fetch']
 const CanContainTypeReference = [ts.SyntaxKind.TypeReference, ts.SyntaxKind.ExpressionWithTypeArguments]
 /** @type {Set<string>} */
 const bundledTypes = new Set()
 /** @type {Set<string>} */
-const excludedTypes = new Set(['URL.createObjectURL'])
+const excludedTypes = new Set(['URL.createObjectURL', 'FormData[[Construct]]'])
 /** @type {Record<string, Set<string>>} */
 const referencingTypes = Object.create(null)
 

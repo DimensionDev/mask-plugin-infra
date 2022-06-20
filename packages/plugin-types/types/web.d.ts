@@ -33,6 +33,10 @@ interface AesKeyGenParams extends Algorithm {
 interface Algorithm {
     name: string;
 }
+interface BlobPropertyBag {
+    endings?: EndingType;
+    type?: string;
+}
 interface CryptoKeyPair {
     privateKey: CryptoKey;
     publicKey: CryptoKey;
@@ -56,6 +60,9 @@ interface EventInit {
 }
 interface EventListenerOptions {
     capture?: boolean;
+}
+interface FilePropertyBag extends BlobPropertyBag {
+    lastModified?: number;
 }
 interface HkdfParams extends Algorithm {
     hash: HashAlgorithmIdentifier;
@@ -98,6 +105,60 @@ interface Pbkdf2Params extends Algorithm {
     iterations: number;
     salt: BufferSource;
 }
+interface QueuingStrategy<T = any> {
+    highWaterMark?: number;
+    size?: QueuingStrategySize<T>;
+}
+interface ReadableStreamReadDoneResult {
+    done: true;
+    value?: undefined;
+}
+interface ReadableStreamReadValueResult<T> {
+    done: false;
+    value: T;
+}
+interface ReadableWritablePair<R = any, W = any> {
+    readable: ReadableStream<R>;
+    /**
+     * Provides a convenient, chainable way of piping this readable stream through a transform stream (or any other { writable, readable } pair). It simply pipes the stream into the writable side of the supplied pair, and returns the readable side for further use.
+     *
+     * Piping a stream will lock it for the duration of the pipe, preventing any other consumer from acquiring a reader.
+     */
+    writable: WritableStream<W>;
+}
+interface RequestInit {
+    /** A BodyInit object or null to set request's body. */
+    body?: BodyInit | null;
+    /** A string indicating how the request will interact with the browser's cache to set request's cache. */
+    cache?: RequestCache;
+    /** A string indicating whether credentials will be sent with the request always, never, or only when sent to a same-origin URL. Sets request's credentials. */
+    credentials?: RequestCredentials;
+    /** A Headers object, an object literal, or an array of two-item arrays to set request's headers. */
+    headers?: HeadersInit;
+    /** A cryptographic hash of the resource to be fetched by request. Sets request's integrity. */
+    integrity?: string;
+    /** A boolean to set request's keepalive. */
+    keepalive?: boolean;
+    /** A string to set request's method. */
+    method?: string;
+    /** A string to indicate whether the request will use CORS, or will be restricted to same-origin URLs. Sets request's mode. */
+    mode?: RequestMode;
+    /** A string indicating whether request follows redirects, results in an error upon encountering a redirect, or returns the redirect (in an opaque fashion). Sets request's redirect. */
+    redirect?: RequestRedirect;
+    /** A string whose value is a same-origin URL, "about:client", or the empty string, to set request's referrer. */
+    referrer?: string;
+    /** A referrer policy to set request's referrerPolicy. */
+    referrerPolicy?: ReferrerPolicy;
+    /** An AbortSignal to set request's signal. */
+    signal?: AbortSignal | null;
+    /** Can only be null. Used to disassociate request from any Window. */
+    window?: null;
+}
+interface ResponseInit {
+    headers?: HeadersInit;
+    status?: number;
+    statusText?: string;
+}
 interface RsaHashedImportParams extends Algorithm {
     hash: HashAlgorithmIdentifier;
 }
@@ -119,6 +180,29 @@ interface RsaOtherPrimesInfo {
 interface RsaPssParams extends Algorithm {
     saltLength: number;
 }
+interface StreamPipeOptions {
+    preventAbort?: boolean;
+    preventCancel?: boolean;
+    /**
+     * Pipes this readable stream to a given writable stream destination. The way in which the piping process behaves under various error conditions can be customized with a number of passed options. It returns a promise that fulfills when the piping process completes successfully, or rejects if any errors were encountered.
+     *
+     * Piping a stream will lock it for the duration of the pipe, preventing any other consumer from acquiring a reader.
+     *
+     * Errors and closures of the source and destination streams propagate as follows:
+     *
+     * An error in this source readable stream will abort destination, unless preventAbort is truthy. The returned promise will be rejected with the source's error, or with any error that occurs during aborting the destination.
+     *
+     * An error in destination will cancel this source readable stream, unless preventCancel is truthy. The returned promise will be rejected with the destination's error, or with any error that occurs during canceling the source.
+     *
+     * When this source readable stream closes, destination will be closed, unless preventClose is truthy. The returned promise will be fulfilled once this process completes, unless an error is encountered while closing the destination, in which case it will be rejected with that error.
+     *
+     * If destination starts out closed or closing, this source readable stream will be canceled, unless preventCancel is true. The returned promise will be rejected with an error indicating piping to a closed stream failed, or with any error that occurs during canceling the source.
+     *
+     * The signal option can be set to an AbortSignal to allow aborting an ongoing pipe operation via the corresponding AbortController. In this case, this source readable stream will be canceled, and destination aborted, unless the respective options preventCancel or preventAbort are set.
+     */
+    preventClose?: boolean;
+    signal?: AbortSignal;
+}
 interface TextDecodeOptions {
     stream?: boolean;
 }
@@ -129,6 +213,19 @@ interface TextDecoderOptions {
 interface TextEncoderEncodeIntoResult {
     read?: number;
     written?: number;
+}
+interface UnderlyingSink<W = any> {
+    abort?: UnderlyingSinkAbortCallback;
+    close?: UnderlyingSinkCloseCallback;
+    start?: UnderlyingSinkStartCallback;
+    type?: undefined;
+    write?: UnderlyingSinkWriteCallback<W>;
+}
+interface UnderlyingSource<R = any> {
+    cancel?: UnderlyingSourceCancelCallback;
+    pull?: UnderlyingSourcePullCallback<R>;
+    start?: UnderlyingSourceStartCallback<R>;
+    type?: undefined;
 }
 interface AbortSignalEventMap {
     "abort": Event;
@@ -149,6 +246,28 @@ declare var AbortSignal: {
     prototype: AbortSignal;
     new (): AbortSignal;
 };
+/** A file-like object of immutable, raw data. Blobs represent data that isn't necessarily in a JavaScript-native format. The File interface is based on Blob, inheriting blob functionality and expanding it to support files on the user's system. */
+interface Blob {
+    readonly size: number;
+    readonly type: string;
+    arrayBuffer(): Promise<ArrayBuffer>;
+    slice(start?: number, end?: number, contentType?: string): Blob;
+    stream(): ReadableStream<Uint8Array>;
+    text(): Promise<string>;
+}
+declare var Blob: {
+    prototype: Blob;
+    new (blobParts?: BlobPart[], options?: BlobPropertyBag): Blob;
+};
+interface Body {
+    readonly body: ReadableStream<Uint8Array> | null;
+    readonly bodyUsed: boolean;
+    arrayBuffer(): Promise<ArrayBuffer>;
+    blob(): Promise<Blob>;
+    formData(): Promise<FormData>;
+    json(): Promise<any>;
+    text(): Promise<string>;
+}
 /** Basic cryptography features available in the current context. It allows access to a cryptographically strong random number generator and to cryptographic primitives. */
 interface Crypto {
     /** Available only in secure contexts. */
@@ -257,6 +376,131 @@ interface EventTarget {
 declare var EventTarget: {
     prototype: EventTarget;
     new (): EventTarget;
+};
+/** Provides information about files and allows JavaScript in a web page to access their content. */
+interface File extends Blob {
+    readonly lastModified: number;
+    readonly name: string;
+    readonly webkitRelativePath: string;
+}
+declare var File: {
+    prototype: File;
+    new (fileBits: BlobPart[], fileName: string, options?: FilePropertyBag): File;
+};
+/** Provides a way to easily construct a set of key/value pairs representing form fields and their values, which can then be easily sent using the XMLHttpRequest.send() method. It uses the same format a form would use if the encoding type were set to "multipart/form-data". */
+interface FormData {
+    append(name: string, value: string | Blob, fileName?: string): void;
+    delete(name: string): void;
+    get(name: string): FormDataEntryValue | null;
+    getAll(name: string): FormDataEntryValue[];
+    has(name: string): boolean;
+    set(name: string, value: string | Blob, fileName?: string): void;
+    forEach(callbackfn: (value: FormDataEntryValue, key: string, parent: FormData) => void, thisArg?: any): void;
+}
+declare var FormData: {
+    prototype: FormData;
+};
+/** This Fetch API interface allows you to perform various actions on HTTP request and response headers. These actions include retrieving, setting, adding to, and removing. A Headers object has an associated header list, which is initially empty and consists of zero or more name and value pairs.  You can add to this using methods like append() (see Examples.) In all methods of this interface, header names are matched by case-insensitive byte sequence. */
+interface Headers {
+    append(name: string, value: string): void;
+    delete(name: string): void;
+    get(name: string): string | null;
+    has(name: string): boolean;
+    set(name: string, value: string): void;
+    forEach(callbackfn: (value: string, key: string, parent: Headers) => void, thisArg?: any): void;
+}
+declare var Headers: {
+    prototype: Headers;
+    new (init?: HeadersInit): Headers;
+};
+/** This Streams API interface represents a readable stream of byte data. The Fetch API offers a concrete instance of a ReadableStream through the body property of a Response object. */
+interface ReadableStream<R = any> {
+    readonly locked: boolean;
+    cancel(reason?: any): Promise<void>;
+    getReader(): ReadableStreamDefaultReader<R>;
+    pipeThrough<T>(transform: ReadableWritablePair<T, R>, options?: StreamPipeOptions): ReadableStream<T>;
+    pipeTo(destination: WritableStream<R>, options?: StreamPipeOptions): Promise<void>;
+    tee(): [
+        ReadableStream<R>,
+        ReadableStream<R>
+    ];
+}
+declare var ReadableStream: {
+    prototype: ReadableStream;
+    new <R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
+};
+interface ReadableStreamDefaultController<R = any> {
+    readonly desiredSize: number | null;
+    close(): void;
+    enqueue(chunk?: R): void;
+    error(e?: any): void;
+}
+declare var ReadableStreamDefaultController: {
+    prototype: ReadableStreamDefaultController;
+    new (): ReadableStreamDefaultController;
+};
+interface ReadableStreamDefaultReader<R = any> extends ReadableStreamGenericReader {
+    read(): Promise<ReadableStreamReadResult<R>>;
+    releaseLock(): void;
+}
+declare var ReadableStreamDefaultReader: {
+    prototype: ReadableStreamDefaultReader;
+    new <R = any>(stream: ReadableStream<R>): ReadableStreamDefaultReader<R>;
+};
+interface ReadableStreamGenericReader {
+    readonly closed: Promise<undefined>;
+    cancel(reason?: any): Promise<void>;
+}
+/** This Fetch API interface represents a resource request. */
+interface Request extends Body {
+    /** Returns the cache mode associated with request, which is a string indicating how the request will interact with the browser's cache when fetching. */
+    readonly cache: RequestCache;
+    /** Returns the credentials mode associated with request, which is a string indicating whether credentials will be sent with the request always, never, or only when sent to a same-origin URL. */
+    readonly credentials: RequestCredentials;
+    /** Returns the kind of resource requested by request, e.g., "document" or "script". */
+    readonly destination: RequestDestination;
+    /** Returns a Headers object consisting of the headers associated with request. Note that headers added in the network layer by the user agent will not be accounted for in this object, e.g., the "Host" header. */
+    readonly headers: Headers;
+    /** Returns request's subresource integrity metadata, which is a cryptographic hash of the resource being fetched. Its value consists of multiple hashes separated by whitespace. [SRI] */
+    readonly integrity: string;
+    /** Returns a boolean indicating whether or not request can outlive the global in which it was created. */
+    readonly keepalive: boolean;
+    /** Returns request's HTTP method, which is "GET" by default. */
+    readonly method: string;
+    /** Returns the mode associated with request, which is a string indicating whether the request will use CORS, or will be restricted to same-origin URLs. */
+    readonly mode: RequestMode;
+    /** Returns the redirect mode associated with request, which is a string indicating how redirects for the request will be handled during fetching. A request will follow redirects by default. */
+    readonly redirect: RequestRedirect;
+    /** Returns the referrer of request. Its value can be a same-origin URL if explicitly set in init, the empty string to indicate no referrer, and "about:client" when defaulting to the global's default. This is used during fetching to determine the value of the `Referer` header of the request being made. */
+    readonly referrer: string;
+    /** Returns the referrer policy associated with request. This is used during fetching to compute the value of the request's referrer. */
+    readonly referrerPolicy: ReferrerPolicy;
+    /** Returns the signal associated with request, which is an AbortSignal object indicating whether or not request has been aborted, and its abort event handler. */
+    readonly signal: AbortSignal;
+    /** Returns the URL of request as a string. */
+    readonly url: string;
+    clone(): Request;
+}
+declare var Request: {
+    prototype: Request;
+    new (input: RequestInfo | URL, init?: RequestInit): Request;
+};
+/** This Fetch API interface represents the response to a request. */
+interface Response extends Body {
+    readonly headers: Headers;
+    readonly ok: boolean;
+    readonly redirected: boolean;
+    readonly status: number;
+    readonly statusText: string;
+    readonly type: ResponseType;
+    readonly url: string;
+    clone(): Response;
+}
+declare var Response: {
+    prototype: Response;
+    new (body?: BodyInit | null, init?: ResponseInit): Response;
+    error(): Response;
+    redirect(url: string | URL, status?: number): Response;
 };
 /**
  * This Web Crypto API interface provides a number of low-level cryptographic functions. It is accessed via the Crypto.subtle properties available in a window context (via Window.crypto).
@@ -373,19 +617,127 @@ declare var URLSearchParams: {
     new (init?: string[][] | Record<string, string> | string | URLSearchParams): URLSearchParams;
     toString(): string;
 };
+/** This Streams API interface provides a standard abstraction for writing streaming data to a destination, known as a sink. This object comes with built-in backpressure and queuing. */
+interface WritableStream<W = any> {
+    readonly locked: boolean;
+    abort(reason?: any): Promise<void>;
+    close(): Promise<void>;
+    getWriter(): WritableStreamDefaultWriter<W>;
+}
+declare var WritableStream: {
+    prototype: WritableStream;
+    new <W = any>(underlyingSink?: UnderlyingSink<W>, strategy?: QueuingStrategy<W>): WritableStream<W>;
+};
+/** This Streams API interface represents a controller allowing control of a WritableStream's state. When constructing a WritableStream, the underlying sink is given a corresponding WritableStreamDefaultController instance to manipulate. */
+interface WritableStreamDefaultController {
+    readonly signal: AbortSignal;
+    error(e?: any): void;
+}
+declare var WritableStreamDefaultController: {
+    prototype: WritableStreamDefaultController;
+    new (): WritableStreamDefaultController;
+};
+/** This Streams API interface is the object returned by WritableStream.getWriter() and once created locks the < writer to the WritableStream ensuring that no other streams can write to the underlying sink. */
+interface WritableStreamDefaultWriter<W = any> {
+    readonly closed: Promise<undefined>;
+    readonly desiredSize: number | null;
+    readonly ready: Promise<undefined>;
+    abort(reason?: any): Promise<void>;
+    close(): Promise<void>;
+    releaseLock(): void;
+    write(chunk?: W): Promise<void>;
+}
+declare var WritableStreamDefaultWriter: {
+    prototype: WritableStreamDefaultWriter;
+    new <W = any>(stream: WritableStream<W>): WritableStreamDefaultWriter<W>;
+};
+interface QueuingStrategySize<T = any> {
+    (chunk: T): number;
+}
+interface UnderlyingSinkAbortCallback {
+    (reason?: any): void | PromiseLike<void>;
+}
+interface UnderlyingSinkCloseCallback {
+    (): void | PromiseLike<void>;
+}
+interface UnderlyingSinkStartCallback {
+    (controller: WritableStreamDefaultController): any;
+}
+interface UnderlyingSinkWriteCallback<W> {
+    (chunk: W, controller: WritableStreamDefaultController): void | PromiseLike<void>;
+}
+interface UnderlyingSourceCancelCallback {
+    (reason?: any): void | PromiseLike<void>;
+}
+interface UnderlyingSourcePullCallback<R> {
+    (controller: ReadableStreamController<R>): void | PromiseLike<void>;
+}
+interface UnderlyingSourceStartCallback<R> {
+    (controller: ReadableStreamController<R>): any;
+}
 declare var crypto: Crypto;
 declare function atob(data: string): string;
 declare function btoa(data: string): string;
+declare function fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
 type AlgorithmIdentifier = Algorithm | string;
 type BigInteger = Uint8Array;
+type BlobPart = BufferSource | Blob | string;
+type BodyInit = ReadableStream | XMLHttpRequestBodyInit;
 type BufferSource = ArrayBufferView | ArrayBuffer;
 type DOMHighResTimeStamp = number;
 type EventListenerOrEventListenerObject = EventListener | EventListenerObject;
+type FormDataEntryValue = File | string;
 type HashAlgorithmIdentifier = AlgorithmIdentifier;
+type HeadersInit = [
+    string,
+    string
+][] | Record<string, string> | Headers;
 type NamedCurve = string;
+type ReadableStreamController<T> = ReadableStreamDefaultController<T>;
+type ReadableStreamReadResult<T> = ReadableStreamReadValueResult<T> | ReadableStreamReadDoneResult;
+type RequestInfo = Request | string;
+type XMLHttpRequestBodyInit = Blob | BufferSource | FormData | URLSearchParams | string;
+type EndingType = "native" | "transparent";
 type KeyFormat = "jwk" | "pkcs8" | "raw" | "spki";
 type KeyType = "private" | "public" | "secret";
 type KeyUsage = "decrypt" | "deriveBits" | "deriveKey" | "encrypt" | "sign" | "unwrapKey" | "verify" | "wrapKey";
+type ReferrerPolicy = "" | "no-referrer" | "no-referrer-when-downgrade" | "origin" | "origin-when-cross-origin" | "same-origin" | "strict-origin" | "strict-origin-when-cross-origin" | "unsafe-url";
+type RequestCache = "default" | "force-cache" | "no-cache" | "no-store" | "only-if-cached" | "reload";
+type RequestCredentials = "include" | "omit" | "same-origin";
+type RequestDestination = "" | "audio" | "audioworklet" | "document" | "embed" | "font" | "frame" | "iframe" | "image" | "manifest" | "object" | "paintworklet" | "report" | "script" | "sharedworker" | "style" | "track" | "video" | "worker" | "xslt";
+type RequestMode = "cors" | "navigate" | "no-cors" | "same-origin";
+type RequestRedirect = "error" | "follow" | "manual";
+type ResponseType = "basic" | "cors" | "default" | "error" | "opaque" | "opaqueredirect";
+interface FormData {
+    [Symbol.iterator](): IterableIterator<[
+        string,
+        FormDataEntryValue
+    ]>;
+    /** Returns an array of key, value pairs for every entry in the list. */
+    entries(): IterableIterator<[
+        string,
+        FormDataEntryValue
+    ]>;
+    /** Returns a list of keys in the list. */
+    keys(): IterableIterator<string>;
+    /** Returns a list of values in the list. */
+    values(): IterableIterator<FormDataEntryValue>;
+}
+interface Headers {
+    [Symbol.iterator](): IterableIterator<[
+        string,
+        string
+    ]>;
+    /** Returns an iterator allowing to go through all key/value pairs contained in this object. */
+    entries(): IterableIterator<[
+        string,
+        string
+    ]>;
+    /** Returns an iterator allowing to go through all keys of the key/value pairs contained in this object. */
+    keys(): IterableIterator<string>;
+    /** Returns an iterator allowing to go through all values of the key/value pairs contained in this object. */
+    values(): IterableIterator<string>;
+}
 interface SubtleCrypto {
     deriveKey(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, derivedKeyType: AlgorithmIdentifier | AesDerivedKeyParams | HmacImportParams | HkdfParams | Pbkdf2Params, extractable: boolean, keyUsages: Iterable<KeyUsage>): Promise<CryptoKey>;
     generateKey(algorithm: RsaHashedKeyGenParams | EcKeyGenParams, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKeyPair>;
