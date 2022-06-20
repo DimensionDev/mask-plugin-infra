@@ -1,7 +1,7 @@
 import ts from 'typescript'
 import { writeFile, readFile } from 'node:fs/promises'
 
-const contains = ['atob', 'btoa', 'TextEncoder', 'TextDecoder']
+const contains = ['atob', 'btoa', 'TextEncoder', 'TextDecoder', 'crypto']
 const CanContainTypeReference = [ts.SyntaxKind.TypeReference, ts.SyntaxKind.ExpressionWithTypeArguments]
 /** @type {Set<string>} */
 const bundledTypes = new Set()
