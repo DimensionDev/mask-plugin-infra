@@ -1,12 +1,12 @@
 import ts from 'typescript'
 import { writeFile, readFile } from 'node:fs/promises'
 
-const contains = ['atob', 'btoa', 'TextEncoder', 'TextDecoder', 'crypto', 'EventTarget']
+const contains = ['atob', 'btoa', 'TextEncoder', 'TextDecoder', 'crypto', 'EventTarget', 'URL']
 const CanContainTypeReference = [ts.SyntaxKind.TypeReference, ts.SyntaxKind.ExpressionWithTypeArguments]
 /** @type {Set<string>} */
 const bundledTypes = new Set()
 /** @type {Set<string>} */
-const excludedTypes = new Set([])
+const excludedTypes = new Set(['URL.createObjectURL'])
 /** @type {Record<string, Set<string>>} */
 const referencingTypes = Object.create(null)
 
@@ -30,7 +30,6 @@ await writeFile(new URL('./types/web.d.ts', import.meta.url), '// This file is g
 
 /** @param {string} name */
 function bundleType(name) {
-    debugger
     if (bundledTypes.has(name)) return
     bundledTypes.add(name)
     for (const key in referencingTypes) {
@@ -54,13 +53,11 @@ function pickDeclaration(context) {
                     ts.isVariableStatement(node)
                 ) {
                     const name = getName(node)
-                    if (!name) return
                     const fullQualifiedName = namePrefix + name
                     if (excludedTypes.has(fullQualifiedName)) return
                     if (!bundledTypes.has(fullQualifiedName)) return
 
                     if (ts.isInterfaceDeclaration(node)) {
-                        const name = namePrefix + node.name.text
                         return context.factory.updateInterfaceDeclaration(
                             node,
                             undefined,
@@ -69,10 +66,36 @@ function pickDeclaration(context) {
                             node.typeParameters,
                             node.heritageClauses,
                             node.members.filter((member) => {
-                                const prop = getName(member.name)
-                                if (!prop) return false
-                                return !excludedTypes.has(name + prop)
+                                const prop = getName(member)
+                                return !excludedTypes.has(fullQualifiedName + prop)
                             }),
+                        )
+                    } else if (ts.isVariableStatement(node)) {
+                        const first = node.declarationList.declarations[0]
+                        if (!first) return ts.visitEachChild(node, self, context)
+                        const type = first.type
+                        if (!type) return ts.visitEachChild(node, self, context)
+                        if (!ts.isTypeLiteralNode(type)) return ts.visitEachChild(node, self, context)
+
+                        return context.factory.updateVariableStatement(
+                            node,
+                            node.modifiers,
+                            context.factory.updateVariableDeclarationList(node.declarationList, [
+                                context.factory.updateVariableDeclaration(
+                                    first,
+                                    first.name,
+                                    undefined,
+                                    context.factory.updateTypeLiteralNode(
+                                        type,
+                                        // @ts-ignore
+                                        type.members.filter((member) => {
+                                            const prop = getName(member)
+                                            return !excludedTypes.has(fullQualifiedName + prop)
+                                        }),
+                                    ),
+                                    undefined,
+                                ),
+                            ]),
                         )
                     }
                 }
@@ -90,10 +113,7 @@ function collectReferences(node, namePrefix = '') {
         const generics = collectGenerics(node.typeParameters)
         addDependency(fullQualifiedName, localQualifiedName, collectIdent(node.heritageClauses), generics)
         node.members.forEach((member) => {
-            if (!member.name) return // ?
-
-            const key = getName(member.name)
-            if (!key) return
+            const key = getName(member)
             const propName = fullQualifiedName + key
             if (excludedTypes.has(propName)) return
 
@@ -114,7 +134,18 @@ function collectReferences(node, namePrefix = '') {
         const localQualifiedName = ident.text
         const fullQualifiedName = namePrefix + localQualifiedName
 
-        addDependency(fullQualifiedName, localQualifiedName, collectIdent(node.declarationList.declarations[0].type))
+        const type = node.declarationList.declarations[0].type
+        if (type && ts.isTypeLiteralNode(type)) {
+            type.members.forEach((member) => {
+                const key = getName(member)
+                const propName = fullQualifiedName + key
+                if (excludedTypes.has(propName)) return
+
+                addDependency(propName, localQualifiedName, collectIdent(member))
+            })
+        } else {
+            addDependency(fullQualifiedName, localQualifiedName, collectIdent(type))
+        }
     } else if (ts.isModuleDeclaration(node)) {
         if (!ts.isIdentifier(node.name)) return
         const name = namePrefix + node.name.text
@@ -169,27 +200,49 @@ function addDependency(fullQualifiedName, localQualifiedName, type, excludeType 
     for (const t of result) set.add(t)
 }
 /**
- * @param {ts.Node | undefined} node
+ * @param {ts.Node} node
  */
 function getName(node) {
-    if (!node) return
-    else if (ts.isVariableStatement(node)) {
-        if (node.declarationList.declarations.length > 1) return
+    if (ts.isVariableStatement(node)) {
+        if (node.declarationList.declarations.length > 1) throw new Error('Multiple variable declarations')
         const ident = node.declarationList.declarations[0].name
-        if (!ts.isIdentifier(ident)) return
+        if (!ts.isIdentifier(ident)) throw new Error('Variable declaration is not an identifier')
         return ident.text
-    } else if (ts.isModuleDeclaration(node)) {
-        if (!ts.isIdentifier(node.name)) return
-        return node.name.text
-    } else if (ts.isInterfaceDeclaration(node)) {
-        return node.name.text
-    } else if (ts.isFunctionDeclaration(node)) {
-        return node.name?.text
-    } else if (ts.isTypeAliasDeclaration(node)) {
-        return node.name.text
-    } else if (ts.isIdentifier(node)) return '.' + node.text
+    } else if (ts.isModuleDeclaration(node)) return node.name.text
+    else if (ts.isInterfaceDeclaration(node)) return node.name.text
+    else if (ts.isFunctionDeclaration(node) && node.name) return node.name.text
+    else if (ts.isTypeAliasDeclaration(node)) return node.name.text
+    else if (ts.isCallSignatureDeclaration(node)) return '[[Call]]'
+    else if (ts.isConstructSignatureDeclaration(node)) return '[[Construct]]'
+    else if (ts.isIndexSignatureDeclaration(node)) return '[[Get]]'
+    else if (ts.isMethodSignature(node)) return getPropertyName(node.name)
+    else if (ts.isPropertySignature(node)) return getPropertyName(node.name)
+    else if (ts.isGetAccessor(node)) return getPropertyName(node.name)
+    else if (ts.isSetAccessor(node)) return getPropertyName(node.name)
+    throw new Error(`Unhandled SyntaxKind ${ts.SyntaxKind[node.kind]}`)
+}
+
+/** @param {ts.PropertyName} node */
+function getPropertyName(node) {
+    if (ts.isIdentifier(node)) return '.' + node.text
     else if (ts.isStringLiteral(node)) return `[${JSON.stringify(node.text)}]`
     else if (ts.isNumericLiteral(node)) return `[${node.text}]`
-    else if (ts.isComputedPropertyName(node))
-        return `[${printer.printNode(ts.EmitHint.Expression, node.expression, sourceFile)}]`
+    else if (ts.isComputedPropertyName(node)) {
+        if (
+            ts.isPropertyAccessExpression(node.expression) &&
+            ts.isIdentifier(node.expression.expression) &&
+            ts.isIdentifier(node.expression.name) &&
+            node.expression.expression.text === 'Symbol'
+        ) {
+            return `[@@${node.expression.name.text}]`
+        }
+        throw new Error(
+            `Unhandled computed property name ${printer.printNode(
+                ts.EmitHint.Expression,
+                node.expression,
+                sourceFile,
+            )}`,
+        )
+    }
+    throw new Error(`Unhandled property name ${ts.SyntaxKind[node.kind]}`)
 }

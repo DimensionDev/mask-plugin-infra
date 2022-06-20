@@ -226,6 +226,7 @@ declare var Event: {
     readonly NONE: number;
 };
 interface EventListener {
+    (evt: Event): void;
 }
 interface EventListenerObject {
     handleEvent(object: Event): void;
@@ -327,6 +328,51 @@ interface TextEncoderCommon {
     /** Returns "utf-8". */
     readonly encoding: string;
 }
+/** The URL interface represents an object providing static methods used for creating object URLs. */
+interface URL {
+    hash: string;
+    host: string;
+    hostname: string;
+    href: string;
+    toString(): string;
+    readonly origin: string;
+    password: string;
+    pathname: string;
+    port: string;
+    protocol: string;
+    search: string;
+    readonly searchParams: URLSearchParams;
+    username: string;
+    toJSON(): string;
+}
+declare var URL: {
+    prototype: URL;
+    new (url: string | URL, base?: string | URL): URL;
+    revokeObjectURL(url: string): void;
+};
+interface URLSearchParams {
+    /** Appends a specified key/value pair as a new search parameter. */
+    append(name: string, value: string): void;
+    /** Deletes the given search parameter, and its associated value, from the list of all search parameters. */
+    delete(name: string): void;
+    /** Returns the first value associated to the given search parameter. */
+    get(name: string): string | null;
+    /** Returns all the values association with a given search parameter. */
+    getAll(name: string): string[];
+    /** Returns a Boolean indicating if such a search parameter exists. */
+    has(name: string): boolean;
+    /** Sets the value associated to a given search parameter to the given value. If there were several values, delete the others. */
+    set(name: string, value: string): void;
+    sort(): void;
+    /** Returns a string containing a query string suitable for use in a URL. Does not include the question mark. */
+    toString(): string;
+    forEach(callbackfn: (value: string, key: string, parent: URLSearchParams) => void, thisArg?: any): void;
+}
+declare var URLSearchParams: {
+    prototype: URLSearchParams;
+    new (init?: string[][] | Record<string, string> | string | URLSearchParams): URLSearchParams;
+    toString(): string;
+};
 declare var crypto: Crypto;
 declare function atob(data: string): string;
 declare function btoa(data: string): string;
@@ -348,4 +394,19 @@ interface SubtleCrypto {
     importKey(format: "jwk", keyData: JsonWebKey, algorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKey>;
     importKey(format: Exclude<KeyFormat, "jwk">, keyData: BufferSource, algorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: Iterable<KeyUsage>): Promise<CryptoKey>;
     unwrapKey(format: KeyFormat, wrappedKey: BufferSource, unwrappingKey: CryptoKey, unwrapAlgorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, unwrappedKeyAlgorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: Iterable<KeyUsage>): Promise<CryptoKey>;
+}
+interface URLSearchParams {
+    [Symbol.iterator](): IterableIterator<[
+        string,
+        string
+    ]>;
+    /** Returns an array of key, value pairs for every entry in the search params. */
+    entries(): IterableIterator<[
+        string,
+        string
+    ]>;
+    /** Returns a list of keys in the search params. */
+    keys(): IterableIterator<string>;
+    /** Returns a list of values in the search params. */
+    values(): IterableIterator<string>;
 }
