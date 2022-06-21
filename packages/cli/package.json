@@ -7,6 +7,8 @@
     "mask-plugin-build": "./dist/build.js"
   },
   "dependencies": {
+    "@masknet/plugin-manifest": "workspace:*",
+    "copy-webpack-plugin": "^11.0.0",
     "gulp": "^4.0.2",
     "resolve-typescript-plugin": "^1.2.0",
     "swc-loader": "^0.2.3"
