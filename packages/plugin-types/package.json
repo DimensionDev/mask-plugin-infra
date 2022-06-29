@@ -6,6 +6,9 @@
   "files": [
     "types"
   ],
+  "scripts": {
+    "libdom": "node ./generate-types-web.mjs"
+  },
   "types": "./types/index.d.ts",
   "dependencies": {
     "async-call-rpc": "^6.1.0",

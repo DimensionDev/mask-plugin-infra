@@ -1,4 +1,4 @@
-declare module '@mask-net/base/identifier.js' {
+declare module '@masknet/base/identifier.js' {
     import type { Option } from 'ts-results'
     export abstract class Identifier {
         abstract toText(): string

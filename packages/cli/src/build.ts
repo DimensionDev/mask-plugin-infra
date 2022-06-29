@@ -85,19 +85,20 @@ const config: webpack.Configuration = {
         /@mui\/.+/,
         'ts-results',
     ],
-    plugins: [
-        new ManifestPlugin(manifest, packageJSON),
-        manifest.i18n?.files
-            ? new CopyPlugin({
-                  patterns: [
-                      {
-                          from: manifest.i18n.files + '/*.json',
-                          to: 'locales/[name][ext]',
-                      },
-                  ],
-              })
-            : undefined!,
-    ].filter(Boolean),
+    plugins: [new ManifestPlugin(manifest, packageJSON)],
+}
+
+if (manifest.i18n?.files) {
+    config.plugins!.push(
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: manifest.i18n.files + '/*.json',
+                    to: 'locales/[name][ext]',
+                },
+            ],
+        }),
+    )
 }
 
 process.addListener('uncaughtException', () => {
