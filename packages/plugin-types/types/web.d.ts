@@ -120,9 +120,17 @@ interface QueuingStrategy<T = any> {
     highWaterMark?: number;
     size?: QueuingStrategySize<T>;
 }
-interface ReadableStreamReadDoneResult {
+interface ReadableStreamGetReaderOptions {
+    /**
+     * Creates a ReadableStreamBYOBReader and locks the stream to the new reader.
+     *
+     * This call behaves the same way as the no-argument variant, except that it only works on readable byte streams, i.e. streams which were constructed specifically with the ability to handle "bring your own buffer" reading. The returned BYOB reader provides the ability to directly read individual chunks from the stream via its read() method, into developer-supplied buffers, allowing more precise control over allocation.
+     */
+    mode?: ReadableStreamReaderMode;
+}
+interface ReadableStreamReadDoneResult<T> {
     done: true;
-    value?: undefined;
+    value?: T;
 }
 interface ReadableStreamReadValueResult<T> {
     done: false;
@@ -225,6 +233,19 @@ interface TextEncoderEncodeIntoResult {
     read?: number;
     written?: number;
 }
+interface UnderlyingByteSource {
+    autoAllocateChunkSize?: number;
+    cancel?: UnderlyingSourceCancelCallback;
+    pull?: (controller: ReadableByteStreamController) => void | PromiseLike<void>;
+    start?: (controller: ReadableByteStreamController) => any;
+    type: "bytes";
+}
+interface UnderlyingDefaultSource<R = any> {
+    cancel?: UnderlyingSourceCancelCallback;
+    pull?: (controller: ReadableStreamDefaultController<R>) => void | PromiseLike<void>;
+    start?: (controller: ReadableStreamDefaultController<R>) => any;
+    type?: undefined;
+}
 interface UnderlyingSink<W = any> {
     abort?: UnderlyingSinkAbortCallback;
     close?: UnderlyingSinkCloseCallback;
@@ -233,10 +254,11 @@ interface UnderlyingSink<W = any> {
     write?: UnderlyingSinkWriteCallback<W>;
 }
 interface UnderlyingSource<R = any> {
+    autoAllocateChunkSize?: number;
     cancel?: UnderlyingSourceCancelCallback;
     pull?: UnderlyingSourcePullCallback<R>;
     start?: UnderlyingSourceStartCallback<R>;
-    type?: undefined;
+    type?: ReadableStreamType;
 }
 /** A controller object that allows you to abort one or more DOM requests as and when desired. */
 interface AbortController {
@@ -267,6 +289,8 @@ interface AbortSignal extends EventTarget {
 declare var AbortSignal: {
     prototype: AbortSignal;
     new (): AbortSignal;
+    // abort(reason?: any): AbortSignal; - To be re-added in the future
+    timeout(milliseconds: number): AbortSignal;
 };
 /** A file-like object of immutable, raw data. Blobs represent data that isn't necessarily in a JavaScript-native format. The File interface is based on Blob, inheriting blob functionality and expanding it to support files on the user's system. */
 interface Blob {
@@ -568,11 +592,26 @@ declare var ProgressEvent: {
     prototype: ProgressEvent;
     new (type: string, eventInitDict?: ProgressEventInit): ProgressEvent;
 };
+interface ReadableByteStreamController {
+    readonly byobRequest: ReadableStreamBYOBRequest | null;
+    readonly desiredSize: number | null;
+    close(): void;
+    enqueue(chunk: ArrayBufferView): void;
+    error(e?: any): void;
+}
+declare var ReadableByteStreamController: {
+    prototype: ReadableByteStreamController;
+    new (): ReadableByteStreamController;
+};
 /** This Streams API interface represents a readable stream of byte data. The Fetch API offers a concrete instance of a ReadableStream through the body property of a Response object. */
 interface ReadableStream<R = any> {
     readonly locked: boolean;
     cancel(reason?: any): Promise<void>;
+    getReader(options: {
+        mode: "byob";
+    }): ReadableStreamBYOBReader;
     getReader(): ReadableStreamDefaultReader<R>;
+    getReader(options?: ReadableStreamGetReaderOptions): ReadableStreamReader<R>;
     pipeThrough<T>(transform: ReadableWritablePair<T, R>, options?: StreamPipeOptions): ReadableStream<T>;
     pipeTo(destination: WritableStream<R>, options?: StreamPipeOptions): Promise<void>;
     tee(): [
@@ -582,10 +621,14 @@ interface ReadableStream<R = any> {
 }
 declare var ReadableStream: {
     prototype: ReadableStream;
+    new (underlyingSource: UnderlyingByteSource, strategy?: {
+        highWaterMark?: number;
+    }): ReadableStream<Uint8Array>;
+    new <R = any>(underlyingSource: UnderlyingDefaultSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
     new <R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
 };
 interface ReadableStreamBYOBReader extends ReadableStreamGenericReader {
-    read(view: ArrayBufferView): Promise<ReadableStreamReadResult<ArrayBufferView>>;
+    read<T extends ArrayBufferView>(view: T): Promise<ReadableStreamReadResult<T>>;
     releaseLock(): void;
 }
 declare var ReadableStreamBYOBReader: {
@@ -679,11 +722,11 @@ declare var Response: {
  * Available only in secure contexts.
  */
 interface SubtleCrypto {
-    decrypt(algorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, key: CryptoKey, data: BufferSource): Promise<any>;
+    decrypt(algorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, key: CryptoKey, data: BufferSource): Promise<ArrayBuffer>;
     deriveBits(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, length: number): Promise<ArrayBuffer>;
     deriveKey(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, derivedKeyType: AlgorithmIdentifier | AesDerivedKeyParams | HmacImportParams | HkdfParams | Pbkdf2Params, extractable: boolean, keyUsages: KeyUsage[]): Promise<CryptoKey>;
     digest(algorithm: AlgorithmIdentifier, data: BufferSource): Promise<ArrayBuffer>;
-    encrypt(algorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, key: CryptoKey, data: BufferSource): Promise<any>;
+    encrypt(algorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, key: CryptoKey, data: BufferSource): Promise<ArrayBuffer>;
     exportKey(format: "jwk", key: CryptoKey): Promise<JsonWebKey>;
     exportKey(format: Exclude<KeyFormat, "jwk">, key: CryptoKey): Promise<ArrayBuffer>;
     generateKey(algorithm: RsaHashedKeyGenParams | EcKeyGenParams, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKeyPair>;
@@ -996,8 +1039,9 @@ type HeadersInit = [
     string
 ][] | Record<string, string> | Headers;
 type NamedCurve = string;
-type ReadableStreamController<T> = ReadableStreamDefaultController<T>;
-type ReadableStreamReadResult<T> = ReadableStreamReadValueResult<T> | ReadableStreamReadDoneResult;
+type ReadableStreamController<T> = ReadableStreamDefaultController<T> | ReadableByteStreamController;
+type ReadableStreamReadResult<T> = ReadableStreamReadValueResult<T> | ReadableStreamReadDoneResult<T>;
+type ReadableStreamReader<T> = ReadableStreamDefaultReader<T> | ReadableStreamBYOBReader;
 type RequestInfo = Request | string;
 type TimerHandler = string | Function;
 type XMLHttpRequestBodyInit = Blob | BufferSource | FormData | URLSearchParams | string;
@@ -1005,6 +1049,8 @@ type EndingType = "native" | "transparent";
 type KeyFormat = "jwk" | "pkcs8" | "raw" | "spki";
 type KeyType = "private" | "public" | "secret";
 type KeyUsage = "decrypt" | "deriveBits" | "deriveKey" | "encrypt" | "sign" | "unwrapKey" | "verify" | "wrapKey";
+type ReadableStreamReaderMode = "byob";
+type ReadableStreamType = "bytes";
 type ReferrerPolicy = "" | "no-referrer" | "no-referrer-when-downgrade" | "origin" | "origin-when-cross-origin" | "same-origin" | "strict-origin" | "strict-origin-when-cross-origin" | "unsafe-url";
 type RequestCache = "default" | "force-cache" | "no-cache" | "no-store" | "only-if-cached" | "reload";
 type RequestCredentials = "include" | "omit" | "same-origin";

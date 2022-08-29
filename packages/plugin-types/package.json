@@ -11,12 +11,12 @@
   },
   "types": "./types/index.d.ts",
   "dependencies": {
-    "async-call-rpc": "^6.1.0",
-    "tss-react": "^3.6.2"
+    "async-call-rpc": "^6.1.2",
+    "tss-react": "^4.0.0"
   },
   "devDependencies": {
-    "@mui/material": "^5.8.4",
-    "@types/web": "^0.0.68"
+    "@mui/material": "^5.10.2",
+    "@types/web": "^0.0.72"
   },
   "peerDependencies": {
     "@mui/material": "^5"

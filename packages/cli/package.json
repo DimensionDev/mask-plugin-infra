@@ -19,9 +19,9 @@
   "devDependencies": {
     "@swc/core": "^1.2.205",
     "@types/gulp": "^4.0.9",
-    "@types/node": "^18.0.0",
-    "webpack": "^5.73.0",
-    "webpack-dev-server": "^4.9.2"
+    "@types/node": "^18.7.13",
+    "webpack": "^5.74.0",
+    "webpack-dev-server": "^4.10.0"
   },
   "peerDependencies": {
     "@swc/core": "^1.2.205",
