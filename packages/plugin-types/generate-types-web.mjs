@@ -1,7 +1,37 @@
 import ts from 'typescript'
 import { writeFile, readFile } from 'node:fs/promises'
 
-const contains = ['atob', 'btoa', 'TextEncoder', 'TextDecoder', 'crypto', 'EventTarget', 'URL', 'fetch']
+const contains = [
+    'atob',
+    'btoa',
+    'TextEncoder',
+    'TextDecoder',
+    'crypto',
+    'EventTarget',
+    'URL',
+    'fetch',
+    'AbortController',
+    'CustomEvent',
+    'DOMException',
+    'FileReader',
+    'IdleDeadline',
+    'ReadableStreamBYOBReader',
+    'ReadableStreamBYOBRequest',
+    'TextDecoderStream',
+    'TextEncoderStream',
+    // 'WebSocket',
+    'console',
+    'WebAssembly',
+    // 'self',
+    'requestIdleCallback',
+    'cancelIdleCallback',
+    'setInterval',
+    'clearInterval',
+    'setTimeout',
+    'clearTimeout',
+    'queueMicrotask',
+    // 'structuredClone',
+]
 const CanContainTypeReference = [ts.SyntaxKind.TypeReference, ts.SyntaxKind.ExpressionWithTypeArguments]
 /** @type {Set<string>} */
 const bundledTypes = new Set()

@@ -41,6 +41,9 @@ interface CryptoKeyPair {
     privateKey: CryptoKey;
     publicKey: CryptoKey;
 }
+interface CustomEventInit<T = any> extends EventInit {
+    detail?: T;
+}
 interface EcKeyGenParams extends Algorithm {
     namedCurve: NamedCurve;
 }
@@ -77,6 +80,9 @@ interface HmacKeyGenParams extends Algorithm {
     hash: HashAlgorithmIdentifier;
     length?: number;
 }
+interface IdleRequestOptions {
+    timeout?: number;
+}
 interface JsonWebKey {
     alg?: string;
     crv?: string;
@@ -104,6 +110,11 @@ interface Pbkdf2Params extends Algorithm {
     hash: HashAlgorithmIdentifier;
     iterations: number;
     salt: BufferSource;
+}
+interface ProgressEventInit extends EventInit {
+    lengthComputable?: boolean;
+    loaded?: number;
+    total?: number;
 }
 interface QueuingStrategy<T = any> {
     highWaterMark?: number;
@@ -227,6 +238,17 @@ interface UnderlyingSource<R = any> {
     start?: UnderlyingSourceStartCallback<R>;
     type?: undefined;
 }
+/** A controller object that allows you to abort one or more DOM requests as and when desired. */
+interface AbortController {
+    /** Returns the AbortSignal object associated with this object. */
+    readonly signal: AbortSignal;
+    /** Invoking this method will set this object's AbortSignal's aborted flag and signal to any observers that the associated activity is to be aborted. */
+    abort(reason?: any): void;
+}
+declare var AbortController: {
+    prototype: AbortController;
+    new (): AbortController;
+};
 interface AbortSignalEventMap {
     "abort": Event;
 }
@@ -293,6 +315,77 @@ interface CryptoKey {
 declare var CryptoKey: {
     prototype: CryptoKey;
     new (): CryptoKey;
+};
+interface CustomEvent<T = any> extends Event {
+    /** Returns any custom data event was created with. Typically used for synthetic events. */
+    readonly detail: T;
+    /** @deprecated */
+    initCustomEvent(type: string, bubbles?: boolean, cancelable?: boolean, detail?: T): void;
+}
+declare var CustomEvent: {
+    prototype: CustomEvent;
+    new <T>(type: string, eventInitDict?: CustomEventInit<T>): CustomEvent<T>;
+};
+/** An abnormal event (called an exception) which occurs as a result of calling a method or accessing a property of a web API. */
+interface DOMException extends Error {
+    /** @deprecated */
+    readonly code: number;
+    readonly message: string;
+    readonly name: string;
+    readonly ABORT_ERR: number;
+    readonly DATA_CLONE_ERR: number;
+    readonly DOMSTRING_SIZE_ERR: number;
+    readonly HIERARCHY_REQUEST_ERR: number;
+    readonly INDEX_SIZE_ERR: number;
+    readonly INUSE_ATTRIBUTE_ERR: number;
+    readonly INVALID_ACCESS_ERR: number;
+    readonly INVALID_CHARACTER_ERR: number;
+    readonly INVALID_MODIFICATION_ERR: number;
+    readonly INVALID_NODE_TYPE_ERR: number;
+    readonly INVALID_STATE_ERR: number;
+    readonly NAMESPACE_ERR: number;
+    readonly NETWORK_ERR: number;
+    readonly NOT_FOUND_ERR: number;
+    readonly NOT_SUPPORTED_ERR: number;
+    readonly NO_DATA_ALLOWED_ERR: number;
+    readonly NO_MODIFICATION_ALLOWED_ERR: number;
+    readonly QUOTA_EXCEEDED_ERR: number;
+    readonly SECURITY_ERR: number;
+    readonly SYNTAX_ERR: number;
+    readonly TIMEOUT_ERR: number;
+    readonly TYPE_MISMATCH_ERR: number;
+    readonly URL_MISMATCH_ERR: number;
+    readonly VALIDATION_ERR: number;
+    readonly WRONG_DOCUMENT_ERR: number;
+}
+declare var DOMException: {
+    prototype: DOMException;
+    new (message?: string, name?: string): DOMException;
+    readonly ABORT_ERR: number;
+    readonly DATA_CLONE_ERR: number;
+    readonly DOMSTRING_SIZE_ERR: number;
+    readonly HIERARCHY_REQUEST_ERR: number;
+    readonly INDEX_SIZE_ERR: number;
+    readonly INUSE_ATTRIBUTE_ERR: number;
+    readonly INVALID_ACCESS_ERR: number;
+    readonly INVALID_CHARACTER_ERR: number;
+    readonly INVALID_MODIFICATION_ERR: number;
+    readonly INVALID_NODE_TYPE_ERR: number;
+    readonly INVALID_STATE_ERR: number;
+    readonly NAMESPACE_ERR: number;
+    readonly NETWORK_ERR: number;
+    readonly NOT_FOUND_ERR: number;
+    readonly NOT_SUPPORTED_ERR: number;
+    readonly NO_DATA_ALLOWED_ERR: number;
+    readonly NO_MODIFICATION_ALLOWED_ERR: number;
+    readonly QUOTA_EXCEEDED_ERR: number;
+    readonly SECURITY_ERR: number;
+    readonly SYNTAX_ERR: number;
+    readonly TIMEOUT_ERR: number;
+    readonly TYPE_MISMATCH_ERR: number;
+    readonly URL_MISMATCH_ERR: number;
+    readonly VALIDATION_ERR: number;
+    readonly WRONG_DOCUMENT_ERR: number;
 };
 /** An event which takes place in the DOM. */
 interface Event {
@@ -387,6 +480,45 @@ declare var File: {
     prototype: File;
     new (fileBits: BlobPart[], fileName: string, options?: FilePropertyBag): File;
 };
+interface FileReaderEventMap {
+    "abort": ProgressEvent<FileReader>;
+    "error": ProgressEvent<FileReader>;
+    "load": ProgressEvent<FileReader>;
+    "loadend": ProgressEvent<FileReader>;
+    "loadstart": ProgressEvent<FileReader>;
+    "progress": ProgressEvent<FileReader>;
+}
+/** Lets web applications asynchronously read the contents of files (or raw data buffers) stored on the user's computer, using File or Blob objects to specify the file or data to read. */
+interface FileReader extends EventTarget {
+    readonly error: DOMException | null;
+    onabort: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;
+    onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;
+    onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;
+    onloadend: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;
+    onloadstart: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;
+    onprogress: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;
+    readonly readyState: number;
+    readonly result: string | ArrayBuffer | null;
+    abort(): void;
+    readAsArrayBuffer(blob: Blob): void;
+    readAsBinaryString(blob: Blob): void;
+    readAsDataURL(blob: Blob): void;
+    readAsText(blob: Blob, encoding?: string): void;
+    readonly DONE: number;
+    readonly EMPTY: number;
+    readonly LOADING: number;
+    addEventListener<K extends keyof FileReaderEventMap>(type: K, listener: (this: FileReader, ev: FileReaderEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+    removeEventListener<K extends keyof FileReaderEventMap>(type: K, listener: (this: FileReader, ev: FileReaderEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+}
+declare var FileReader: {
+    prototype: FileReader;
+    new (): FileReader;
+    readonly DONE: number;
+    readonly EMPTY: number;
+    readonly LOADING: number;
+};
 /** Provides a way to easily construct a set of key/value pairs representing form fields and their values, which can then be easily sent using the XMLHttpRequest.send() method. It uses the same format a form would use if the encoding type were set to "multipart/form-data". */
 interface FormData {
     append(name: string, value: string | Blob, fileName?: string): void;
@@ -400,6 +532,10 @@ interface FormData {
 declare var FormData: {
     prototype: FormData;
 };
+interface GenericTransformStream {
+    readonly readable: ReadableStream;
+    readonly writable: WritableStream;
+}
 /** This Fetch API interface allows you to perform various actions on HTTP request and response headers. These actions include retrieving, setting, adding to, and removing. A Headers object has an associated header list, which is initially empty and consists of zero or more name and value pairs.  You can add to this using methods like append() (see Examples.) In all methods of this interface, header names are matched by case-insensitive byte sequence. */
 interface Headers {
     append(name: string, value: string): void;
@@ -412,6 +548,25 @@ interface Headers {
 declare var Headers: {
     prototype: Headers;
     new (init?: HeadersInit): Headers;
+};
+interface IdleDeadline {
+    readonly didTimeout: boolean;
+    timeRemaining(): DOMHighResTimeStamp;
+}
+declare var IdleDeadline: {
+    prototype: IdleDeadline;
+    new (): IdleDeadline;
+};
+/** Events measuring progress of an underlying process, like an HTTP request (for an XMLHttpRequest, or the loading of the underlying resource of an <img>, <audio>, <video>, <style> or <link>). */
+interface ProgressEvent<T extends EventTarget = EventTarget> extends Event {
+    readonly lengthComputable: boolean;
+    readonly loaded: number;
+    readonly target: T | null;
+    readonly total: number;
+}
+declare var ProgressEvent: {
+    prototype: ProgressEvent;
+    new (type: string, eventInitDict?: ProgressEventInit): ProgressEvent;
 };
 /** This Streams API interface represents a readable stream of byte data. The Fetch API offers a concrete instance of a ReadableStream through the body property of a Response object. */
 interface ReadableStream<R = any> {
@@ -428,6 +583,23 @@ interface ReadableStream<R = any> {
 declare var ReadableStream: {
     prototype: ReadableStream;
     new <R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
+};
+interface ReadableStreamBYOBReader extends ReadableStreamGenericReader {
+    read(view: ArrayBufferView): Promise<ReadableStreamReadResult<ArrayBufferView>>;
+    releaseLock(): void;
+}
+declare var ReadableStreamBYOBReader: {
+    prototype: ReadableStreamBYOBReader;
+    new (stream: ReadableStream): ReadableStreamBYOBReader;
+};
+interface ReadableStreamBYOBRequest {
+    readonly view: ArrayBufferView | null;
+    respond(bytesWritten: number): void;
+    respondWithNewView(view: ArrayBufferView): void;
+}
+declare var ReadableStreamBYOBRequest: {
+    prototype: ReadableStreamBYOBRequest;
+    new (): ReadableStreamBYOBRequest;
 };
 interface ReadableStreamDefaultController<R = any> {
     readonly desiredSize: number | null;
@@ -557,6 +729,14 @@ interface TextDecoderCommon {
     /** Returns the value of ignore BOM. */
     readonly ignoreBOM: boolean;
 }
+interface TextDecoderStream extends GenericTransformStream, TextDecoderCommon {
+    readonly readable: ReadableStream<string>;
+    readonly writable: WritableStream<BufferSource>;
+}
+declare var TextDecoderStream: {
+    prototype: TextDecoderStream;
+    new (label?: string, options?: TextDecoderOptions): TextDecoderStream;
+};
 /** TextEncoder takes a stream of code points as input and emits a stream of bytes. For a more scalable, non-native library, see StringView – a C-like representation of strings based on typed arrays. */
 interface TextEncoder extends TextEncoderCommon {
     /** Returns the result of running UTF-8's encoder. */
@@ -572,6 +752,14 @@ interface TextEncoderCommon {
     /** Returns "utf-8". */
     readonly encoding: string;
 }
+interface TextEncoderStream extends GenericTransformStream, TextEncoderCommon {
+    readonly readable: ReadableStream<Uint8Array>;
+    readonly writable: WritableStream<string>;
+}
+declare var TextEncoderStream: {
+    prototype: TextEncoderStream;
+    new (): TextEncoderStream;
+};
 /** The URL interface represents an object providing static methods used for creating object URLs. */
 interface URL {
     hash: string;
@@ -651,6 +839,111 @@ declare var WritableStreamDefaultWriter: {
     prototype: WritableStreamDefaultWriter;
     new <W = any>(stream: WritableStream<W>): WritableStreamDefaultWriter<W>;
 };
+interface Console {
+    assert(condition?: boolean, ...data: any[]): void;
+    clear(): void;
+    count(label?: string): void;
+    countReset(label?: string): void;
+    debug(...data: any[]): void;
+    dir(item?: any, options?: any): void;
+    dirxml(...data: any[]): void;
+    error(...data: any[]): void;
+    group(...data: any[]): void;
+    groupCollapsed(...data: any[]): void;
+    groupEnd(): void;
+    info(...data: any[]): void;
+    log(...data: any[]): void;
+    table(tabularData?: any, properties?: string[]): void;
+    time(label?: string): void;
+    timeEnd(label?: string): void;
+    timeLog(label?: string, ...data: any[]): void;
+    timeStamp(label?: string): void;
+    trace(...data: any[]): void;
+    warn(...data: any[]): void;
+}
+declare var console: Console;
+declare namespace WebAssembly {
+    interface Global {
+        value: any;
+        valueOf(): any;
+    }
+    var Global: {
+        prototype: Global;
+        new (descriptor: GlobalDescriptor, v?: any): Global;
+    };
+    interface Instance {
+        readonly exports: Exports;
+    }
+    var Instance: {
+        prototype: Instance;
+        new (module: Module, importObject?: Imports): Instance;
+    };
+    interface Memory {
+        readonly buffer: ArrayBuffer;
+        grow(delta: number): number;
+    }
+    var Memory: {
+        prototype: Memory;
+        new (descriptor: MemoryDescriptor): Memory;
+    };
+    interface Module {
+    }
+    var Module: {
+        prototype: Module;
+        new (bytes: BufferSource): Module;
+        customSections(moduleObject: Module, sectionName: string): ArrayBuffer[];
+        exports(moduleObject: Module): ModuleExportDescriptor[];
+        imports(moduleObject: Module): ModuleImportDescriptor[];
+    };
+    interface Table {
+        readonly length: number;
+        get(index: number): any;
+        grow(delta: number, value?: any): number;
+        set(index: number, value?: any): void;
+    }
+    var Table: {
+        prototype: Table;
+        new (descriptor: TableDescriptor, value?: any): Table;
+    };
+    interface GlobalDescriptor {
+        mutable?: boolean;
+        value: ValueType;
+    }
+    interface MemoryDescriptor {
+        initial: number;
+        maximum?: number;
+        shared?: boolean;
+    }
+    interface ModuleExportDescriptor {
+        kind: ImportExportKind;
+        name: string;
+    }
+    interface ModuleImportDescriptor {
+        kind: ImportExportKind;
+        module: string;
+        name: string;
+    }
+    interface TableDescriptor {
+        element: TableKind;
+        initial: number;
+        maximum?: number;
+    }
+    interface WebAssemblyInstantiatedSource {
+        instance: Instance;
+        module: Module;
+    }
+    type ImportExportKind = "function" | "global" | "memory" | "table";
+    type TableKind = "anyfunc" | "externref";
+    type ValueType = "anyfunc" | "externref" | "f32" | "f64" | "i32" | "i64" | "v128";
+    type ExportValue = Function | Global | Memory | Table;
+    type Exports = Record<string, ExportValue>;
+    type ImportValue = ExportValue | number;
+    type Imports = Record<string, ModuleImports>;
+    type ModuleImports = Record<string, ImportValue>;
+}
+interface IdleRequestCallback {
+    (deadline: IdleDeadline): void;
+}
 interface QueuingStrategySize<T = any> {
     (chunk: T): number;
 }
@@ -675,10 +968,20 @@ interface UnderlyingSourcePullCallback<R> {
 interface UnderlyingSourceStartCallback<R> {
     (controller: ReadableStreamController<R>): any;
 }
+interface VoidFunction {
+    (): void;
+}
+declare function cancelIdleCallback(handle: number): void;
+declare function requestIdleCallback(callback: IdleRequestCallback, options?: IdleRequestOptions): number;
 declare var crypto: Crypto;
 declare function atob(data: string): string;
 declare function btoa(data: string): string;
+declare function clearInterval(id: number | undefined): void;
+declare function clearTimeout(id: number | undefined): void;
 declare function fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+declare function queueMicrotask(callback: VoidFunction): void;
+declare function setInterval(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;
+declare function setTimeout(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;
 type AlgorithmIdentifier = Algorithm | string;
 type BigInteger = Uint8Array;
 type BlobPart = BufferSource | Blob | string;
@@ -696,6 +999,7 @@ type NamedCurve = string;
 type ReadableStreamController<T> = ReadableStreamDefaultController<T>;
 type ReadableStreamReadResult<T> = ReadableStreamReadValueResult<T> | ReadableStreamReadDoneResult;
 type RequestInfo = Request | string;
+type TimerHandler = string | Function;
 type XMLHttpRequestBodyInit = Blob | BufferSource | FormData | URLSearchParams | string;
 type EndingType = "native" | "transparent";
 type KeyFormat = "jwk" | "pkcs8" | "raw" | "spki";
