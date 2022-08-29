@@ -1,4 +1,3 @@
-/// <reference path="./open.d.ts" />
 /// <reference path="./rpc.d.ts" />
 
 declare module '@masknet/plugin/utils' {
