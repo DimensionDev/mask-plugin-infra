@@ -1,5 +1,5 @@
 declare module '@masknet/plugin/worker' {
-    import type { DatabaseStorage } from 'mask://self'
+    import type { DatabaseStorage } from 'mask:self'
     import type { Option, Result } from 'ts-results'
     //#region TaggedStorage
     /**

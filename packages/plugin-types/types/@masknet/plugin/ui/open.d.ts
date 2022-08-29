@@ -1,4 +1,4 @@
-declare module '@masknet/plugin/utils/open' {
+declare module '@masknet/plugin/ui/open' {
     export type WindowTarget = '_top' | '_self' | '_parent' | '_blank' | string
     export interface BehaviorFlags {
         popup?: boolean

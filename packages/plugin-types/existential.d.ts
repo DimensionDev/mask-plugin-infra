@@ -1,5 +1,5 @@
 // This file is not going to be published.
-declare module 'mask://self' {
+declare module 'mask:self' {
     /** RPC type used by "worker" */
     export type RPCType = any
     /** RPC type used by "workerGenerator" */
