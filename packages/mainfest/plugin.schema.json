@@ -1,87 +1,33 @@
 {
-    "$ref": "#/definitions/Manifest",
-    "definitions": {
-        "Manifest": {
-            "type": "object",
-            "additionalProperties": true,
-            "required": ["manifest_version", "name", "author", "description", "version", "entries"],
-            "properties": {
-                "manifest_version": {
-                    "type": "integer",
-                    "maximum": 1,
-                    "minimum": 1
-                },
-                "name": {
-                    "type": "string"
-                },
-                "author": {
-                    "anyOf": [
-                        { "$ref": "#/definitions/Author" },
-                        {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Author"
-                            }
-                        }
-                    ]
-                },
-                "description": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                },
-                "homepage_url": {
-                    "type": "string",
-                    "format": "uri"
-                },
-                "experimental": {
-                    "type": "boolean",
-                    "default": false
-                },
-                "default_locale": {
-                    "type": "string",
-                    "default": "en"
-                },
-                "entries": {
-                    "$ref": "#/definitions/Entries"
-                }
-            },
-            "title": "Manifest"
+    "title": "Manifest",
+    "type": "object",
+    "additionalProperties": true,
+    "required": ["manifest_version", "name", "entries"],
+    "properties": {
+        "manifest_version": {
+            "type": "number",
+            "enum": [1]
         },
-        "Author": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string",
-                    "format": "uri",
-                    "qt-uri-protocols": ["http"]
-                }
-            },
-            "required": ["name"],
-            "title": "Author"
+        "name": {
+            "type": "string"
         },
-        "Entries": {
+        "entries": {
+            "$ref": "#/$defs/entries"
+        }
+    },
+
+    "$defs": {
+        "entries": {
             "type": "object",
             "additionalProperties": false,
             "minProperties": 1,
             "properties": {
-                "background": {
-                    "type": "string"
-                },
-                "popup": {
-                    "type": "string"
-                },
-                "dashboard": {
-                    "type": "string"
-                },
-                "content_script": {
-                    "type": "string"
-                }
+                "rpc": { "type": "string" },
+                "rpcGenerator": { "type": "string" },
+                "background": { "type": "string" },
+                "content_script": { "type": "string" },
+                "popup": { "type": "string" },
+                "dashboard": { "type": "string" }
             }
         }
     }
