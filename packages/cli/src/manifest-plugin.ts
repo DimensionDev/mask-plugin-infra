@@ -25,7 +25,7 @@ export class ManifestPlugin implements WebpackPluginInstance {
                 ])
                 delete newManifest.$schema
                 if (this.manifest.i18n) {
-                    newManifest.i18n.files = "locales/"
+                    newManifest.i18n.files = 'locales/'
                 }
 
                 compilation.assets['mask-manifest.json'] = new compiler.webpack.sources.RawSource(
