@@ -2,21 +2,15 @@
     "title": "Manifest",
     "type": "object",
     "additionalProperties": true,
-    "required": ["manifest_version", "name", "entries"],
+    "required": ["manifest_version", "id", "entries"],
     "properties": {
         "manifest_version": {
             "type": "number",
             "enum": [1]
         },
-        "name": {
+        "id": {
             "type": "string"
         },
-        "entries": {
-            "$ref": "#/$defs/entries"
-        }
-    },
-
-    "$defs": {
         "entries": {
             "type": "object",
             "additionalProperties": false,
@@ -28,6 +22,16 @@
                 "content_script": { "type": "string" },
                 "popup": { "type": "string" },
                 "dashboard": { "type": "string" }
+            }
+        },
+        "contributes": {
+            "type": "object",
+            "description": "Functionalities this plugin supports.",
+            "properties": {
+                "backup": {
+                    "type": "boolean",
+                    "description": "This plugin will join the backup process to backup its own data. To use `registerBackupHandler` exported from '@masknet/plugin/worker', this property must be set to true."
+                }
             }
         }
     }

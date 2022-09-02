@@ -15,7 +15,12 @@ declare module '@masknet/plugin/content-script' {
      */
     export function dropMetadata(metaID: string): void
     export function closeApplicationBoardDialog(): void
-    export function addMetadataRender(metaID: string, meta: unknown): void
-    export function addMetadataBadgeRender(metaID: string, meta: unknown): void
-    export function addCompositionEntry(label: any, dialog: any): void
+    export function registerMetadataRender(metaID: string, render: (meta: any) => React.ReactElement): void
+    export function registerMetadataBadgeRender(metaID: string, render: (meta: any) => React.ReactElement): void
+    export function registerCompositionEntry(label: React.ReactElement, dialog: React.ComponentType<CompositionEntryProps>): void
+    export function registerCompositionEntry(label: React.ReactElement, dialog: React.ComponentType<CompositionEntryProps>): void
+    export interface CompositionEntryProps {
+        onClose: () => void
+        open: boolean
+    }
 }

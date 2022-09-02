@@ -109,8 +109,12 @@ declare module '@masknet/plugin/worker' {
         onRestore(data: unknown): Promise<Result<void, Error>>
     }
     /**
-     * Register a backup handler. This function can be only called once.
+     * Register a backup handler.
+     *
+     * `manifest.contributes.backup` must be true to attach a backup handler.
+     *
+     * This function can be only called once. Second call to this function cause an exception.
      */
-    export function addBackupHandler(handler: BackupHandler): void
+    export function registerBackupHandler(handler: BackupHandler): void
     //#endregion
 }
