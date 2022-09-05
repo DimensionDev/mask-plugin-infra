@@ -15,10 +15,15 @@ declare module '@masknet/plugin/content-script' {
      */
     export function dropMetadata(metaID: string): void
     export function closeApplicationBoardDialog(): void
+}
+declare module '@masknet/plugin/content-script/react' {
+    // TODO: those hooks should have DOM equivalent
     export function registerMetadataRender(metaID: string, render: (meta: any) => React.ReactElement): void
     export function registerMetadataBadgeRender(metaID: string, render: (meta: any) => React.ReactElement): void
-    export function registerCompositionEntry(label: React.ReactElement, dialog: React.ComponentType<CompositionEntryProps>): void
-    export function registerCompositionEntry(label: React.ReactElement, dialog: React.ComponentType<CompositionEntryProps>): void
+    export function registerCompositionEntry(
+        label: React.ReactElement,
+        dialog: React.ComponentType<CompositionEntryProps>,
+    ): void
     export interface CompositionEntryProps {
         onClose: () => void
         open: boolean
