@@ -9,30 +9,52 @@
             "enum": [1]
         },
         "id": {
-            "type": "string"
+            "type": "string",
+            "examples": ["com.example.test"]
         },
         "entries": {
             "type": "object",
             "additionalProperties": false,
             "minProperties": 1,
             "properties": {
-                "rpc": { "type": "string" },
-                "rpcGenerator": { "type": "string" },
-                "background": { "type": "string" },
-                "content_script": { "type": "string" },
-                "popup": { "type": "string" },
-                "dashboard": { "type": "string" }
+                "rpc": {
+                    "type": "string",
+                    "description": "A relative file path points to the RPC entry.",
+                    "examples": ["./src/worker/service.ts"]
+                },
+                "rpcGenerator": {
+                    "type": "string",
+                    "description": "A relative file path points to the RPC Generator entry.",
+                    "examples": ["./src/worker/service-generator.ts"]
+                },
+                "background": {
+                    "type": "string",
+                    "description": "A relative file path points to the background entry.",
+                    "examples": ["./src/worker/index.ts"]
+                },
+                "content_script": {
+                    "type": "string",
+                    "description": "A relative file path points to the content script entry.",
+                    "examples": ["./src/site-adaptor/index.tsx"]
+                },
+                "popup": { "type": "string", "description": "A relative file path points to the popup entry." },
+                "dashboard": { "type": "string", "description": "A relative file path points to the dashboard entry." }
             }
         },
         "contributes": {
             "type": "object",
-            "description": "Functionalities this plugin supports.",
+            "description": "Functionalities supported.",
             "properties": {
                 "backup": {
                     "type": "boolean",
                     "description": "This plugin will join the backup process to backup its own data. To use `registerBackupHandler` exported from '@masknet/plugin/worker', this property must be set to true."
                 }
             }
+        },
+        "locales": {
+            "type": "string",
+            "description": "A relative path points to a folder that contains JSON translation files.",
+            "examples": ["./src/locales/"]
         }
     }
 }

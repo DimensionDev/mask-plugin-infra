@@ -1,11 +1,12 @@
 {
     "$schema": "./plugin.schema.json",
     "manifest_version": 1,
-    "name": "Example extension",
+    "id": "com.example.test",
     "entries": {
         "background": "./dist/background.js",
         "popup": "./dist/popup.js",
         "dashboard": "./dist/dashboard.js",
         "content_script": "./dist/content_script.js"
-    }
+    },
+    "locales": "./src/locales/"
 }

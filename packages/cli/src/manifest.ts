@@ -2,9 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 export interface Manifest {
     entries: Record<string, string>
-    i18n?: {
-        files: string
-    }
+    locales?: string
 }
 export const manifest: Manifest = JSON.parse(
     (await readFile(join(process.cwd(), 'mask-manifest.json'), 'utf-8'))

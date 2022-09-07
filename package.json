@@ -10,7 +10,7 @@
     "build:watch": "tsc -b ./tsconfig.json --watch"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.24.3",
+    "@changesets/cli": "^2.24.4",
     "prettier": "^2.7.1",
     "typescript": "^4.8.2"
   },

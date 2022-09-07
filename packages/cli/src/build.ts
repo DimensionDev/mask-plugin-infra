@@ -6,7 +6,6 @@ import { join } from 'node:path'
 import { createRequire } from 'node:module'
 import type { Config } from '@swc/core'
 import CopyPlugin = require('copy-webpack-plugin')
-import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 import { manifest, packageJSON } from './manifest.js'
 import { ManifestPlugin } from './manifest-plugin.js'
 
@@ -51,8 +50,12 @@ const config: webpack.Configuration = {
         },
     },
     resolve: {
+        extensionAlias: {
+            '.js': ['.tsx', '.ts', '.js'],
+            '.jsx': ['.tsx'],
+            '.mjs': ['.mts', '.mjs'],
+        },
         extensions: ['.tsx', '.ts', '.js'],
-        plugins: [new ResolveTypeScriptPlugin()],
         fallback: {},
     },
     entry: manifest.entries,
@@ -88,12 +91,12 @@ const config: webpack.Configuration = {
     plugins: [new ManifestPlugin(manifest, packageJSON)],
 }
 
-if (manifest.i18n?.files) {
+if (manifest.locales) {
     config.plugins!.push(
         new CopyPlugin({
             patterns: [
                 {
-                    from: manifest.i18n.files + '/*.json',
+                    from: manifest.locales + '/*.json',
                     to: 'locales/[name][ext]',
                 },
             ],

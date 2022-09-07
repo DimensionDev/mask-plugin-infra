@@ -10,18 +10,17 @@
     "@masknet/plugin-manifest": "workspace:*",
     "copy-webpack-plugin": "^11.0.0",
     "gulp": "^4.0.2",
-    "resolve-typescript-plugin": "^1.2.0",
     "swc-loader": "^0.2.3"
   },
   "engines": {
     "node": ">=18.3.0"
   },
   "devDependencies": {
-    "@swc/core": "^1.2.205",
+    "@swc/core": "^1.2.248",
     "@types/gulp": "^4.0.9",
-    "@types/node": "^18.7.13",
+    "@types/node": "^18.7.15",
     "webpack": "^5.74.0",
-    "webpack-dev-server": "^4.10.0"
+    "webpack-dev-server": "^4.10.1"
   },
   "peerDependencies": {
     "@swc/core": "^1.2.205",
