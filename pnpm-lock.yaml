@@ -26,7 +26,7 @@ importers:
       webpack: ^5.74.0
       webpack-dev-server: ^4.10.1
     dependencies:
-      '@masknet/plugin-manifest': link:../mainfest
+      '@masknet/plugin-manifest': link:../manifest
       copy-webpack-plugin: 11.0.0_webpack@5.74.0
       gulp: 4.0.2
       swc-loader: 0.2.3_lunvzmoaeqc2fzziwzckltjomy
@@ -40,7 +40,7 @@ importers:
   packages/configs:
     specifiers: {}
 
-  packages/mainfest:
+  packages/manifest:
     specifiers: {}
 
   packages/plugin-types:
