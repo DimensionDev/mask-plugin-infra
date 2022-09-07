@@ -1,6 +1,8 @@
 {
   "name": "@masknet/configs",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
-  "files": ["tsconfig.json"]
+  "files": [
+    "tsconfig.json"
+  ]
 }
